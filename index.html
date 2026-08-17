@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dasar-Dasar Fotografi & Videografi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #000000;
+            color: #e0e0e0;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        #starCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===== LANDING PAGE ===== */
+        .landing {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        .landing.hidden {
+            display: none;
+        }
+
+        .landing-header {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: slideDown 0.8s ease-out;
+        }
+
+        .landing-header h1 {
+            font-size: 3.5rem;
+            background: linear-gradient(135deg, #d4af37, #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .landing-header p {
+            font-size: 1.1rem;
+            color: #b0b0b0;
+            font-style: italic;
+        }
+
+        .cards-container {
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        .card {
+            width: 280px;
+            height: 350px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01));
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(212, 175, 55, 0.1), transparent);
+            transform: rotate(45deg);
+            animation: shimmer 3s infinite;
+        }
+
+        .card:hover {
+            border-color: #d4af37;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.4), inset 0 0 20px rgba(212, 175, 55, 0.1);
+            transform: translateY(-10px);
+        }
+
+        .card-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .card:nth-child(2) .card-icon {
+            animation-delay: 0.5s;
+        }
+
+        .card h2 {
+            font-size: 1.8rem;
+            color: #d4af37;
+            text-align: center;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card p {
+            color: #a0a0a0;
+            text-align: center;
+            font-size: 0.95rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===== DETAIL PAGE ===== */
+        .detail-page {
+            display: none;
+            padding: 40px 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+            animation: fadeIn 0.6s ease-in-out;
+        }
+
+        .detail-page.active {
+            display: block;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: #d4af37;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: rgba(212, 175, 55, 0.2);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .detail-header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        .detail-header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #d4af37, #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .detail-header .intro-text {
+            color: #b0b0b0;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .section {
+            margin-bottom: 50px;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 25px;
+            padding: 20px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Warna untuk Section A */
+        .section-a {
+            background: linear-gradient(135deg, rgba(100, 200, 255, 0.2), rgba(100, 150, 255, 0.1));
+            border-left: 5px solid #64c8ff;
+            box-shadow: 0 0 30px rgba(100, 200, 255, 0.3), inset 0 0 20px rgba(100, 200, 255, 0.05);
+        }
+
+        /* Warna untuk Section B */
+        .section-b {
+            background: linear-gradient(135deg, rgba(255, 200, 100, 0.2), rgba(255, 150, 100, 0.1));
+            border-left: 5px solid #ffc864;
+            box-shadow: 0 0 30px rgba(255, 200, 100, 0.3), inset 0 0 20px rgba(255, 200, 100, 0.05);
+        }
+
+        .content-blocks {
+            display: grid;
+            gap: 20px;
+        }
+
+        .content-block {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.5s ease-out backwards;
+        }
+
+        .content-block:hover {
+            border-color: rgba(212, 175, 55, 0.3);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+            transform: translateX(5px);
+        }
+
+        .content-block h3 {
+            color: #d4af37;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .content-block h3::before {
+            content: '●';
+            color: #d4af37;
+        }
+
+        .content-block p {
+            color: #d0d0d0;
+            line-height: 1.7;
+            font-size: 0.95rem;
+        }
+
+        .content-block:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .content-block:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .content-block:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .content-block:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%) translateY(-100%) rotate(45deg);
+            }
+            100% {
+                transform: translateX(100%) translateY(100%) rotate(45deg);
+            }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .landing-header h1 {
+                font-size: 2.5rem;
+            }
+
+            .cards-container {
+                gap: 20px;
+            }
+
+            .card {
+                width: 250px;
+                height: 300px;
+            }
+
+            .detail-header h1 {
+                font-size: 2rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- STAR ANIMATION CANVAS -->
+    <canvas id="starCanvas"></canvas>
+
+    <div class="content-wrapper">
+        <!-- LANDING PAGE -->
+        <div class="landing" id="landing">
+        <div class="landing-header">
+            <h1>Fotografi & Videografi</h1>
+            <p>Pelajari Dasar-Dasar Seni Visual</p>
+        </div>
+        <div class="cards-container">
+            <div class="card" onclick="goToDetail('fotografi')">
+                <div class="card-icon">📷</div>
+                <h2>Fotografi</h2>
+                <p>Menangkap cahaya untuk menciptakan gambar yang memukau</p>
+            </div>
+            <div class="card" onclick="goToDetail('videografi')">
+                <div class="card-icon">🎬</div>
+                <h2>Videografi</h2>
+                <p>Merekam gerakan dengan ritme dan cerita yang dinamis</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOTOGRAFI DETAIL PAGE -->
+    <div class="detail-page" id="fotografi-detail">
+        <button class="back-btn" onclick="goBack()">← Kembali</button>
+        <div class="detail-header">
+            <h1>Fotografi</h1>
+            <p class="intro-text">Fotografi adalah seni dan teknik menangkap cahaya pada media peka cahaya untuk menciptakan gambar. Pemahaman mendasar berpusat pada kontrol pencahayaan (exposure) dan komposisi visual.</p>
+        </div>
+
+        <!-- Section A -->
+        <div class="section">
+            <div class="section-title section-a">A. Segitiga Exposure (The Exposure Triangle)</div>
+            <div class="content-blocks">
+                <div class="content-block">
+                    <h3>Aperture (Bukaan Lensa / f-stop)</h3>
+                    <p>Mengontrol jumlah cahaya yang masuk dan kedalaman bidang (Depth of Field). Bukaan lebar (misal: f/1.8) menghasilkan latar belakang buram (bokeh), sedangkan bukaan sempit (misal: f/11) membuat seluruh area tajam.</p>
+                </div>
+                <div class="content-block">
+                    <h3>Shutter Speed (Kecepatan Rana)</h3>
+                    <p>Mengontrol durasi cahaya mengenai sensor. Kecepatan tinggi (1/1000 detik) membekukan gerakan cepat; kecepatan lambat (1/2 detik) menciptakan efek gerak kabur (motion blur).</p>
+                </div>
+                <div class="content-block">
+                    <h3>ISO (Sensitivitas Sensor)</h3>
+                    <p>Menentukan seberapa sensitif sensor terhadap cahaya. ISO rendah (100–200) menghasilkan gambar bersih tanpa noise; ISO tinggi (3200+) digunakan dalam kondisi minim cahaya namun menambah grain/noise.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section B -->
+        <div class="section">
+            <div class="section-title section-b">B. Elemen Kunci Komposisi & Fokus</div>
+            <div class="content-blocks">
+                <div class="content-block">
+                    <h3>Rule of Thirds</h3>
+                    <p>Membagi bingkai menjadi sembilan kisi seimbang; tempatkan subjek utama di titik persimpangan kisi.</p>
+                </div>
+                <div class="content-block">
+                    <h3>Focal Length</h3>
+                    <p>Jarak fokus lensa yang menentukan sudut pandang—wide-angle (16-35mm) untuk lanskap, prime/portrait (50mm-85mm) untuk manusia.</p>
+                </div>
+                <div class="content-block">
+                    <h3>Fokus Manual vs Otomatis</h3>
+                    <p>Single AF (AF-S) cocok untuk subjek diam, sedangkan Continuous AF (AF-C) memantau subjek bergerak.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIDEOGRAFI DETAIL PAGE -->
+    <div class="detail-page" id="videografi-detail">
+        <button class="back-btn" onclick="goBack()">← Kembali</button>
+        <div class="detail-header">
+            <h1>Videografi</h1>
+            <p class="intro-text">Videografi adalah seni merekam gambar bergerak yang mengombinasikan elemen visual, ritme gerakan, dan audio untuk menyampaikan cerita secara dinamis.</p>
+        </div>
+
+        <!-- Section A -->
+        <div class="section">
+            <div class="section-title section-a">A. Aturan Teknis Video</div>
+            <div class="content-blocks">
+                <div class="content-block">
+                    <h3>Frame Rate (FPS)</h3>
+                    <p>Jumlah bingkai per detik. 24 FPS memberi kesan cinematic standar film; 30 FPS cocok untuk siaran TV/vlog; 60 FPS/120 FPS digunakan untuk rekaman slow-motion yang halus.</p>
+                </div>
+                <div class="content-block">
+                    <h3>Rule of 180° (Shutter Angle)</h3>
+                    <p>Aturan dasar agar gerakan terlihat alami. Atur Shutter Speed sebesar 2x Frame Rate (contoh: 24 FPS = Shutter Speed 1/50 detik).</p>
+                </div>
+                <div class="content-block">
+                    <h3>White Balance & Color Profile</h3>
+                    <p>Mengatur temperatur warna (Kelvin) agar warna kulit dan objek akurat. Profil LOG/Flat digunakan untuk fleksibilitas color grading saat post-production.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section B -->
+        <div class="section">
+            <div class="section-title section-b">B. Pergerakan Kamera & Sinematografi</div>
+            <div class="content-blocks">
+                <div class="content-block">
+                    <h3>Pan & Tilt</h3>
+                    <p>Pan memutar kamera secara horizontal (kiri-kanan); Tilt menggerakkan kamera secara vertikal (atas-bawah).</p>
+                </div>
+                <div class="content-block">
+                    <h3>Tracking / Dolly</h3>
+                    <p>Kamera bergerak mengikuti atau mendekati subjek untuk menciptakan kedalaman spasial.</p>
+                </div>
+                <div class="content-block">
+                    <h3>Tata Suara (Audio)</h3>
+                    <p>Kualitas video sangat ditentukan oleh audio. Gunakan mikrofon eksternal (mic lavalier atau shotgun) daripada mikrofon bawaan kamera.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div>
+
+    <script>
+        // ===== STAR ANIMATION =====
+        const canvas = document.getElementById('starCanvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        class PixelStar {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 1; // 1-3 pixels
+                this.opacity = Math.random() * 0.5 + 0.3; // 0.3-0.8
+                this.twinkleSpeed = Math.random() * 0.05 + 0.01;
+                this.direction = Math.random() > 0.5 ? 1 : -1;
+            }
+
+            update() {
+                // Twinkle effect
+                this.opacity += this.twinkleSpeed * this.direction;
+                if (this.opacity >= 1 || this.opacity <= 0.2) {
+                    this.direction *= -1;
+                }
+            }
+
+            draw() {
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                // Draw pixel star (small square)
+                ctx.fillRect(this.x, this.y, this.size, this.size);
+                // Glow effect
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity * 0.3})`;
+                ctx.fillRect(this.x - 1, this.y - 1, this.size + 2, this.size + 2);
+            }
+        }
+
+        // Create stars
+        const starCount = 150;
+        const stars = [];
+        for (let i = 0; i < starCount; i++) {
+            stars.push(new PixelStar());
+        }
+
+        function animateStars() {
+            // Clear canvas
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Update and draw stars
+            stars.forEach(star => {
+                star.update();
+                star.draw();
+            });
+
+            requestAnimationFrame(animateStars);
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Start animation
+        animateStars();
+
+        // ===== NAVIGATION =====
+        function goToDetail(type) {
+            document.getElementById('landing').classList.add('hidden');
+            document.getElementById('fotografi-detail').classList.remove('active');
+            document.getElementById('videografi-detail').classList.remove('active');
+            
+            if (type === 'fotografi') {
+                document.getElementById('fotografi-detail').classList.add('active');
+            } else if (type === 'videografi') {
+                document.getElementById('videografi-detail').classList.add('active');
+            }
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function goBack() {
+            document.getElementById('landing').classList.remove('hidden');
+            document.getElementById('fotografi-detail').classList.remove('active');
+            document.getElementById('videografi-detail').classList.remove('active');
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
